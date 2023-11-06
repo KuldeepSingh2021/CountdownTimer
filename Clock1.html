@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #1c1c1c;
+            color: #fff;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        #timer {
+            font-size: 48px;
+            background-color: #007BFF;
+            border-radius: 50%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            width: 200px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        #timer::before {
+            content: "⏳";
+            font-size: 48px;
+            display: block;
+        }
+
+        #controls {
+            margin: 20px;
+        }
+
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            background-color: #e91e63;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #ff4081;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="timer">02s:00</div>
+        <div id="controls">
+            <button id="start">Start</button>
+            <button id="stop">Stop</button>
+            <button id="reset">Reset</button>
+        </div>
+        <audio id="audio" src="alarm.mp3" loop></audio>
+    </div>
+
+    <script>
+        let timerInterval;
+        let timeInSeconds = 120; // Set your initial time in seconds (e.g., 3 minutes)
+
+        const timerDisplay = document.getElementById("timer");
+        const startButton = document.getElementById("start");
+        const stopButton = document.getElementById("stop");
+        const resetButton = document.getElementById("reset");
+        const audio = document.getElementById("audio");
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeInSeconds / 60);
+            const seconds = timeInSeconds % 60;
+            timerDisplay.innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(function () {
+                if (timeInSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Timer has ended!");
+                } else {
+                    timeInSeconds--;
+                    updateTimerDisplay();
+                }
+            }, 1000);
+
+            // Play the audio when the timer starts
+            audio.play();
+
+            startButton.disabled = true;
+            stopButton.disabled = false;
+            resetButton.disabled = true;
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            audio.pause(); // Pause the audio when the timer is stopped
+            startButton.disabled = false;
+            stopButton.disabled = true;
+            resetButton.disabled = false;
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timeInSeconds = 120; // Reset to the initial time
+            updateTimerDisplay();
+            audio.pause(); // Pause the audio when the timer is reset
+            startButton.disabled = false;
+            stopButton.disabled = true;
+            resetButton.disabled = true;
+        }
+
+        startButton.addEventListener("click", startTimer);
+        stopButton.addEventListener("click", stopTimer);
+        resetButton.addEventListener("click", resetTimer);
+
+        // Initial display
+        updateTimerDisplay();
+        stopButton.disabled = true;
+        resetButton.disabled = true;
+    </script>
+</body>
+</html>
